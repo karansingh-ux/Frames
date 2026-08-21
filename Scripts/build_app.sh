@@ -20,6 +20,9 @@ fi
 if [ -f "Resources/shutter.aif" ]; then
     cp "Resources/shutter.aif" "${APP_BUNDLE}/Contents/Resources/shutter.aif"
 fi
+if [ -f "Resources/support_illustration.png" ]; then
+    cp "Resources/support_illustration.png" "${APP_BUNDLE}/Contents/Resources/support_illustration.png"
+fi
 
 echo "=== Applying Code Signature (ad-hoc with stable designated requirement) ==="
 codesign --force --sign - --identifier "app.frames.macos" -r='designated => identifier "app.frames.macos"' "${APP_BUNDLE}/Contents/MacOS/Frames"
