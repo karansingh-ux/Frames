@@ -38,6 +38,13 @@ hdiutil create -volname "Frames" -srcfolder "${APP_BUNDLE}" -ov -format UDZO "Ex
 # Create Frames.zip
 cd build && zip -r -y -q "../Export/Frames.zip" "Frames.app" && cd ..
 
+# Sync with Website downloads folder if present
+if [ -d "website/public" ]; then
+    mkdir -p "website/public/downloads"
+    cp "Export/Frames.dmg" "website/public/downloads/Frames.dmg"
+    echo "Synced Export/Frames.dmg -> website/public/downloads/Frames.dmg"
+fi
+
 echo "=== Successfully Built Frames.app and Export Artifacts ==="
 echo "App bundle: $(pwd)/${APP_BUNDLE}"
 echo "Export files: $(pwd)/Export/"
