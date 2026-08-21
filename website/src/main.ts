@@ -27,7 +27,13 @@ import {
   BatteryCharging,
   AlertTriangle,
   Info,
-  ClipboardCheck
+  ClipboardCheck,
+  Settings,
+  Command,
+  Heart,
+  Folder,
+  Mail,
+  Coffee
 } from 'lucide';
 
 // Initialize Selected Lucide Icons for optimal performance
@@ -61,7 +67,13 @@ function initIcons() {
       BatteryCharging,
       AlertTriangle,
       Info,
-      ClipboardCheck
+      ClipboardCheck,
+      Settings,
+      Command,
+      Heart,
+      Folder,
+      Mail,
+      Coffee
     }
   });
 }
@@ -135,33 +147,8 @@ function showToast(message: string, type: 'success' | 'info' | 'warning' = 'succ
   }, 3500);
 }
 
-// Stack Hover & Fan-out Setup
+// Stack Actions Setup
 function initStackInteractions() {
-  const stackContainer = document.getElementById('hero-stack-container');
-  const fanToggleBtn = document.getElementById('fan-toggle-btn');
-  
-  if (stackContainer) {
-    stackContainer.addEventListener('mouseenter', () => {
-      stackContainer.classList.add('fanned');
-      const label = document.getElementById('stack-state-label');
-      if (label) label.textContent = 'Hovered: 5 Active Screenshots Fanned Out';
-    });
-
-    stackContainer.addEventListener('mouseleave', () => {
-      stackContainer.classList.remove('fanned');
-      const label = document.getElementById('stack-state-label');
-      if (label) label.textContent = 'Hover to fan out all 5 stacked captures';
-    });
-  }
-
-  if (fanToggleBtn && stackContainer) {
-    fanToggleBtn.addEventListener('click', () => {
-      stackContainer.classList.toggle('fanned');
-      const isFanned = stackContainer.classList.contains('fanned');
-      fanToggleBtn.textContent = isFanned ? 'Collapse Stack' : 'Fan Out Stack (5)';
-    });
-  }
-
   // Copy Action
   const copyBtn = document.getElementById('action-copy-btn');
   if (copyBtn) {
@@ -177,22 +164,13 @@ function initStackInteractions() {
   if (saveBtn) {
     saveBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      showToast('Explicitly saved to ~/Desktop', 'info');
+      showToast('Saved to ~/Desktop', 'info');
       startTimer(); // reset
-    });
-  }
-
-  // Capture Trigger demo
-  const captureDemoBtn = document.getElementById('demo-capture-btn');
-  if (captureDemoBtn) {
-    captureDemoBtn.addEventListener('click', () => {
-      showToast('New screenshot captured (Stack: 5/5 slots active)', 'info');
-      startTimer();
     });
   }
 }
 
-// Settings Window Tab Navigation
+// Settings Window Tab Navigation (Matching native app tabs)
 function initSettingsTabs() {
   const tabButtons = document.querySelectorAll('.settings-tab-btn');
   const tabPanels = document.querySelectorAll('.settings-tab-panel');
@@ -201,13 +179,13 @@ function initSettingsTabs() {
     btn.addEventListener('click', () => {
       const target = btn.getAttribute('data-tab');
 
-      // Update button states
+      // Update button styles
       tabButtons.forEach(b => {
-        b.classList.remove('bg-brand-electric/20', 'border-brand-electric/50', 'text-white');
-        b.classList.add('text-slate-400', 'border-transparent');
+        b.classList.remove('bg-[#0302FF]', 'border-[#5B5AFF]/40', 'text-white');
+        b.classList.add('bg-white/[0.04]', 'border-white/[0.04]', 'text-slate-400');
       });
-      btn.classList.add('bg-brand-electric/20', 'border-brand-electric/50', 'text-white');
-      btn.classList.remove('text-slate-400', 'border-transparent');
+      btn.classList.add('bg-[#0302FF]', 'border-[#5B5AFF]/40', 'text-white');
+      btn.classList.remove('bg-white/[0.04]', 'border-white/[0.04]', 'text-slate-400');
 
       // Update panels
       tabPanels.forEach(panel => {

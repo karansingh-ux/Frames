@@ -27,13 +27,13 @@
       <!-- Center Links -->
       <nav class="hidden md:flex items-center gap-8 text-sm text-slate-400">
         <a href="#features" class="hover:text-white transition-colors">Features</a>
-        <a href="#workflow" class="hover:text-white transition-colors">Workflow</a>
+        <a href="#settings" class="hover:text-white transition-colors">Settings</a>
         <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
       </nav>
 
-      <!-- Right CTA: Only Star on GitHub -->
+      <!-- Right CTA: Direct GitHub Star Button -->
       <div class="flex items-center gap-3">
-        <a href="https://github.com/frames-app/frames" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-white/10 hover:border-white/20 text-xs font-semibold text-slate-300 hover:text-white transition-all">
+        <a href="https://github.com/karansingh-ux/Frames" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-white/10 hover:border-white/20 text-xs font-semibold text-slate-300 hover:text-white transition-all bg-white/[0.02]">
           <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-amber-400"></i>
           <span>Star</span>
         </a>
@@ -55,9 +55,9 @@
         Frames keeps your screenshots in preview for 60 seconds, so you can capture multiple references, and move them wherever you need
       </p>
 
-      <!-- Centered Single Download Button -->
-      <div class="flex items-center justify-center mb-6" id="download">
-        <a href="#download" class="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#0302FF] hover:bg-[#201fff] text-white font-semibold text-sm transition-all shadow-sm active:scale-98">
+      <!-- Centered Single Download Button (Direct DMG Download) -->
+      <div class="flex items-center justify-center mb-6">
+        <a href="/downloads/Frames.dmg" download="Frames.dmg" class="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#0302FF] hover:bg-[#201fff] text-white font-semibold text-sm transition-all shadow-sm active:scale-98">
           <i data-lucide="download" class="w-4 h-4"></i>
           <span>Download for macOS</span>
         </a>
@@ -267,71 +267,183 @@
     </div>
   </section>
 
-  <!-- Section 2: Interactive Settings / Workflow -->
-  <section id="workflow" class="py-20 border-t border-white/[0.06]">
-    <div class="max-w-3xl mx-auto px-6">
+  <!-- Section 2: Native App Settings (Pixel-perfect replica of SettingsView.swift) -->
+  <section id="settings" class="py-20 border-t border-white/[0.06]">
+    <div class="max-w-2xl mx-auto px-6">
       
-      <div class="text-left mb-10">
+      <div class="text-left mb-8">
         <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">Native Settings</h2>
-        <p class="text-slate-400 text-sm">Lightweight configuration with global shortcuts.</p>
+        <p class="text-slate-400 text-sm">Configured exactly as it appears inside the macOS app.</p>
       </div>
 
-      <!-- Clean Settings Card -->
-      <div class="rounded-xl border border-white/10 bg-[#0e0e16] overflow-hidden">
+      <!-- App Settings Window Frame (480px nominal design) -->
+      <div class="rounded-2xl border border-white/[0.08] bg-[#08080C] overflow-hidden shadow-2xl">
         
-        <!-- Tab Bar -->
-        <div class="p-3 border-b border-white/[0.06] bg-[#090910]">
-          <div class="grid grid-cols-3 gap-1.5 p-1 rounded-lg bg-black/40">
-            <button data-tab="hotkeys" class="settings-tab-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-[#0302FF]/20 border border-[#0302FF]/40 text-white transition-all">
-              Hotkeys
+        <!-- Header Bar & 3 Tabs (Matching SettingsTab.allCases) -->
+        <div class="px-5 pt-3.5 pb-3 border-b border-white/[0.08] bg-[#08080C] flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <!-- General Tab -->
+            <button data-tab="general" class="settings-tab-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#0302FF] border border-[#5B5AFF]/40 text-white transition-all">
+              <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+              <span>General</span>
             </button>
-            <button data-tab="general" class="settings-tab-btn px-3 py-1.5 rounded-md text-xs font-semibold text-slate-400 border border-transparent hover:text-white transition-all">
-              General
+            <!-- Shortcuts Tab -->
+            <button data-tab="shortcuts" class="settings-tab-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white/[0.04] border border-white/[0.04] text-slate-400 hover:text-white transition-all">
+              <i data-lucide="command" class="w-3.5 h-3.5"></i>
+              <span>Shortcuts</span>
             </button>
-            <button data-tab="support" class="settings-tab-btn px-3 py-1.5 rounded-md text-xs font-semibold text-slate-400 border border-transparent hover:text-white transition-all">
-              Support
+            <!-- Support Tab -->
+            <button data-tab="support" class="settings-tab-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white/[0.04] border border-white/[0.04] text-slate-400 hover:text-white transition-all">
+              <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+              <span>Support</span>
             </button>
           </div>
+
+          <!-- Version Pill -->
+          <span class="text-[10px] font-mono font-bold text-slate-500 px-2 py-0.5 rounded-full bg-white/[0.05]">
+            v1.0.0
+          </span>
         </div>
 
-        <!-- Panel Body -->
-        <div class="p-6">
+        <!-- Scrollable Tab Body Area -->
+        <div class="p-5 bg-[#08080C]">
           
-          <!-- Hotkeys Tab -->
-          <div id="tab-hotkeys" class="settings-tab-panel space-y-3">
-            <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.02]">
-              <span class="text-xs font-medium text-slate-200">Full Screen</span>
-              <div class="px-2 py-1 rounded bg-black/60 border border-white/10 text-xs font-mono text-slate-300">⌥ Option + 1</div>
+          <!-- 1. GENERAL TAB (Matching GeneralSettingsSection) -->
+          <div id="tab-general" class="settings-tab-panel space-y-3">
+            
+            <!-- Group 1: Output & Capture Preferences -->
+            <div class="rounded-xl border border-white/[0.08] bg-[#11111A] overflow-hidden divide-y divide-white/[0.08]">
+              
+              <!-- Row 1: Save Location -->
+              <div class="px-3.5 py-2.5 flex items-center justify-between text-xs">
+                <span class="text-slate-200">Save Location</span>
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.06] border border-white/[0.08] text-slate-300 font-medium">
+                  <i data-lucide="folder" class="w-3 h-3 text-[#5B5AFF]"></i>
+                  <span>Desktop</span>
+                  <i data-lucide="chevron-down" class="w-2.5 h-2.5 text-slate-500 ml-0.5"></i>
+                </div>
+              </div>
+
+              <!-- Row 2: Save Format -->
+              <div class="px-3.5 py-2.5 flex items-center justify-between text-xs">
+                <span class="text-slate-200">Save Format</span>
+                <div class="px-2.5 py-1 rounded-md bg-white/[0.06] border border-white/[0.08] text-slate-300 font-medium flex items-center gap-2">
+                  <span>PNG (Lossless)</span>
+                  <i data-lucide="chevron-down" class="w-2.5 h-2.5 text-slate-500"></i>
+                </div>
+              </div>
+
+              <!-- Row 3: After Capture -->
+              <div class="px-3.5 py-2.5 flex items-center justify-between text-xs">
+                <span class="text-slate-200">After Capture</span>
+                <div class="flex p-0.5 rounded-md bg-black/40 border border-white/[0.08] text-[11px]">
+                  <span class="px-2 py-0.5 rounded bg-white/10 text-white font-medium">Show Preview</span>
+                  <span class="px-2 py-0.5 text-slate-400">Copy Directly</span>
+                </div>
+              </div>
+
+              <!-- Row 4: Preview Lifetime -->
+              <div class="px-3.5 py-2.5 flex items-center justify-between text-xs">
+                <span class="text-slate-200">Preview Lifetime</span>
+                <div class="flex p-0.5 rounded-md bg-black/40 border border-white/[0.08] text-[11px]">
+                  <span class="px-2 py-0.5 text-slate-400">30s</span>
+                  <span class="px-2 py-0.5 rounded bg-white/10 text-white font-medium">60s</span>
+                  <span class="px-2 py-0.5 text-slate-400">120s</span>
+                </div>
+              </div>
+
             </div>
-            <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.02]">
-              <span class="text-xs font-medium text-slate-200">Area Selection</span>
-              <div class="px-2 py-1 rounded bg-black/60 border border-white/10 text-xs font-mono text-slate-300">⌥ Option + 2</div>
+
+            <!-- Group 2: Audio & System Startup -->
+            <div class="rounded-xl border border-white/[0.08] bg-[#11111A] overflow-hidden divide-y divide-white/[0.08]">
+              
+              <div class="px-3.5 py-2.5 flex items-center justify-between text-xs">
+                <span class="text-slate-200">Camera Shutter Sound</span>
+                <div class="w-7 h-4 rounded-full bg-[#0302FF] p-0.5 flex justify-end">
+                  <div class="w-3 h-3 rounded-full bg-white shadow-sm"></div>
+                </div>
+              </div>
+
+              <div class="px-3.5 py-2.5 flex items-center justify-between text-xs">
+                <span class="text-slate-200">Launch at Startup</span>
+                <div class="w-7 h-4 rounded-full bg-[#0302FF] p-0.5 flex justify-end">
+                  <div class="w-3 h-3 rounded-full bg-white shadow-sm"></div>
+                </div>
+              </div>
+
             </div>
-            <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.02]">
-              <span class="text-xs font-medium text-slate-200">Scrolling Capture</span>
-              <div class="px-2 py-1 rounded bg-black/60 border border-white/10 text-xs font-mono text-slate-300">⌥ Option + 3</div>
+
+            <!-- Group 3: Permissions Status -->
+            <div class="rounded-xl border border-white/[0.08] bg-[#11111A] p-3 flex items-center justify-between text-xs">
+              <span class="text-slate-200">Screen Recording</span>
+              <div class="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                <span>Granted</span>
+              </div>
             </div>
+
           </div>
 
-          <!-- General Tab -->
-          <div id="tab-general" class="settings-tab-panel hidden space-y-3">
-            <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.02]">
-              <span class="text-xs font-medium text-slate-200">Launch at Login</span>
-              <div class="w-8 h-5 rounded-full bg-[#0302FF] p-0.5 flex justify-end"><div class="w-4 h-4 rounded-full bg-white"></div></div>
+          <!-- 2. SHORTCUTS TAB (Matching ShortcutsSettingsSection) -->
+          <div id="tab-shortcuts" class="settings-tab-panel hidden space-y-3">
+            
+            <div class="rounded-xl border border-white/[0.08] bg-[#11111A] overflow-hidden divide-y divide-white/[0.08]">
+              <div class="px-3.5 py-3 flex items-center justify-between text-xs">
+                <span class="text-slate-200">Full-Screen Capture</span>
+                <div class="px-3 py-1 rounded-md bg-white/[0.06] border border-white/[0.08] text-slate-200 font-mono text-xs font-semibold">
+                  ⌥ Option + 1
+                </div>
+              </div>
+              <div class="px-3.5 py-3 flex items-center justify-between text-xs">
+                <span class="text-slate-200">Area Marquee Capture</span>
+                <div class="px-3 py-1 rounded-md bg-white/[0.06] border border-white/[0.08] text-slate-200 font-mono text-xs font-semibold">
+                  ⌥ Option + 2
+                </div>
+              </div>
             </div>
-            <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.02]">
-              <span class="text-xs font-medium text-slate-200">Auto-Save Destination</span>
-              <span class="text-xs font-mono text-slate-400">~/Desktop</span>
-            </div>
+
+            <p class="text-[11px] text-slate-500 px-1">
+              Click a shortcut button and press your preferred key combination.
+            </p>
           </div>
 
-          <!-- Support Tab -->
-          <div id="tab-support" class="settings-tab-panel hidden text-center py-2 space-y-3">
-            <p class="text-xs text-slate-400 font-mono">Frames for macOS • v1.0.0</p>
-            <a href="https://github.com/frames-app/frames" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0302FF] text-white text-xs font-semibold">
-              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
-              <span>Star on GitHub</span>
+          <!-- 3. SUPPORT TAB (Matching SupportSettingsSection) -->
+          <div id="tab-support" class="settings-tab-panel hidden space-y-4">
+            
+            <!-- Support Illustration -->
+            <div class="w-full h-44 rounded-xl border border-white/[0.08] overflow-hidden bg-[#11111A]">
+              <img src="/assets/support_illustration.png" alt="Support Illustration" class="w-full h-full object-cover" />
+            </div>
+
+            <!-- Warm Message -->
+            <div class="text-center space-y-1">
+              <p class="text-xs font-medium text-slate-200">
+                Every coffee makes my mom a little prouder of me. ❤️
+              </p>
+              <p class="text-[11px] text-slate-500">
+                Frames is completely free and open-source.
+              </p>
+            </div>
+
+            <!-- Buy Me a Coffee Primary Button -->
+            <a href="https://buymeacoffee.com" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#0302FF] hover:bg-[#201fff] text-white text-xs font-semibold transition-all">
+              <i data-lucide="coffee" class="w-4 h-4"></i>
+              <span>Buy Me a Coffee</span>
             </a>
+
+            <!-- Bottom Text Actions (Report a Problem & Star on GitHub) -->
+            <div class="pt-2 border-t border-white/[0.08] flex items-center justify-center gap-5 text-xs text-slate-400">
+              <a href="mailto:support@framesapp.com?subject=Frames%20Problem%20Report" class="flex items-center gap-1.5 hover:text-white transition-colors">
+                <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                <span>Report a Problem</span>
+              </a>
+              <span class="text-slate-600">•</span>
+              <a href="https://github.com/karansingh-ux/Frames" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-white transition-colors">
+                <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 fill-amber-400"></i>
+                <span>Star on GitHub</span>
+              </a>
+            </div>
+
           </div>
 
         </div>
@@ -393,8 +505,8 @@
         <span>Native macOS Screenshot Utility</span>
       </div>
       <div class="flex items-center gap-6 text-slate-400">
-        <a href="https://github.com/frames-app/frames" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
-        <a href="https://github.com/frames-app/frames/releases" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Releases</a>
+        <a href="https://github.com/karansingh-ux/Frames" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
+        <a href="https://github.com/karansingh-ux/Frames/releases" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Releases</a>
       </div>
     </div>
   </footer>
