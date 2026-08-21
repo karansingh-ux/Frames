@@ -18,3 +18,4 @@ build/
 
 # Environment / AI Scratch
 .gemini/
+node_modules/
