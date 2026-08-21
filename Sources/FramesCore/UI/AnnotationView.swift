@@ -2,6 +2,7 @@ import SwiftUI
 import AppKit
 
 public enum AnnotationTool: String, CaseIterable, Identifiable {
+    case draw = "Draw"
     case arrow = "Arrow"
     case text = "Text"
     case highlight = "Highlight"
@@ -12,6 +13,7 @@ public enum AnnotationTool: String, CaseIterable, Identifiable {
     
     public var iconName: String {
         switch self {
+        case .draw: return "pencil.tip"
         case .arrow: return "arrow.up.right"
         case .text: return "textformat"
         case .highlight: return "highlighter"
@@ -26,6 +28,7 @@ public struct AnnotationElement: Identifiable {
     public var tool: AnnotationTool
     public var start: CGPoint
     public var end: CGPoint
+    public var points: [CGPoint] = []
     public var text: String = ""
     public var color: Color = .red
 }
@@ -35,7 +38,7 @@ public struct AnnotationView: View {
     var onSaveAndDismiss: (CGImage) -> Void
     var onCancel: () -> Void
     
-    @State private var currentTool: AnnotationTool = .arrow
+    @State private var currentTool: AnnotationTool = .draw
     @State private var elements: [AnnotationElement] = []
     @State private var currentElement: AnnotationElement?
     @State private var selectedColor: Color = .red
@@ -120,15 +123,18 @@ public struct AnnotationView: View {
                                         tool: currentTool,
                                         start: value.startLocation,
                                         end: value.location,
+                                        points: [value.startLocation, value.location],
                                         color: selectedColor
                                     )
                                 } else {
                                     currentElement?.end = value.location
+                                    currentElement?.points.append(value.location)
                                 }
                             }
                             .onEnded { value in
                                 if var el = currentElement {
                                     el.end = value.location
+                                    el.points.append(value.location)
                                     elements.append(el)
                                     currentElement = nil
                                 }
@@ -142,11 +148,25 @@ public struct AnnotationView: View {
     
     private func drawElement(_ element: AnnotationElement, in context: inout GraphicsContext) {
         switch element.tool {
+        case .draw:
+            if element.points.count > 1 {
+                var path = Path()
+                path.move(to: element.points[0])
+                for pt in element.points.dropFirst() {
+                    path.addLine(to: pt)
+                }
+                context.stroke(path, with: .color(element.color), style: StrokeStyle(lineWidth: 3.5, lineCap: .round, lineJoin: .round))
+            } else {
+                var path = Path()
+                path.addEllipse(in: CGRect(x: element.start.x - 1.5, y: element.start.y - 1.5, width: 3, height: 3))
+                context.fill(path, with: .color(element.color))
+            }
+            
         case .arrow:
             var path = Path()
             path.move(to: element.start)
             path.addLine(to: element.end)
-            context.stroke(path, with: .color(element.color), lineWidth: 3)
+            context.stroke(path, with: .color(element.color), style: StrokeStyle(lineWidth: 3, lineCap: .round))
             
             // Draw arrow head
             let angle = atan2(element.end.y - element.start.y, element.end.x - element.start.x)
@@ -225,9 +245,24 @@ public struct AnnotationView: View {
             let p2 = CGPoint(x: el.end.x * scaleX, y: CGFloat(height) - (el.end.y * scaleY))
             
             switch el.tool {
+            case .draw:
+                guard el.points.count > 1 else { continue }
+                ctx.setStrokeColor(NSColor(el.color).cgColor)
+                ctx.setLineWidth(4.0 * scaleX)
+                ctx.setLineCap(.round)
+                ctx.setLineJoin(.round)
+                ctx.beginPath()
+                let first = el.points[0]
+                ctx.move(to: CGPoint(x: first.x * scaleX, y: CGFloat(height) - (first.y * scaleY)))
+                for pt in el.points.dropFirst() {
+                    ctx.addLine(to: CGPoint(x: pt.x * scaleX, y: CGFloat(height) - (pt.y * scaleY)))
+                }
+                ctx.strokePath()
+                
             case .arrow:
                 ctx.setStrokeColor(NSColor(el.color).cgColor)
                 ctx.setLineWidth(4.0 * scaleX)
+                ctx.setLineCap(.round)
                 ctx.beginPath()
                 ctx.move(to: p1)
                 ctx.addLine(to: p2)

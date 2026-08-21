@@ -3,6 +3,40 @@ import AppKit
 import UniformTypeIdentifiers
 import CoreGraphics
 
+public final class ScreenshotDragItem: NSObject, NSPasteboardWriting {
+    public let fileURL: URL
+    public let pngData: Data
+    public let tiffData: Data?
+    
+    public init(fileURL: URL, pngData: Data, tiffData: Data?) {
+        self.fileURL = fileURL
+        self.pngData = pngData
+        self.tiffData = tiffData
+        super.init()
+    }
+    
+    public func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
+        return [
+            .fileURL,
+            NSPasteboard.PasteboardType(UTType.fileURL.identifier),
+            NSPasteboard.PasteboardType(UTType.png.identifier),
+            NSPasteboard.PasteboardType("Apple PNG pasteboard type"),
+            .tiff
+        ]
+    }
+    
+    public func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+        if type == .fileURL || type.rawValue == UTType.fileURL.identifier {
+            return (fileURL as NSURL).pasteboardPropertyList(forType: .fileURL)
+        } else if type.rawValue == UTType.png.identifier || type.rawValue == "Apple PNG pasteboard type" {
+            return pngData
+        } else if type == .tiff {
+            return tiffData
+        }
+        return nil
+    }
+}
+
 public final class DragDropManager {
     public static let shared = DragDropManager()
     
@@ -15,19 +49,27 @@ public final class DragDropManager {
         cleanCache()
     }
     
-    public func prepareCacheFiles(for items: [ScreenshotItem]) -> [URL] {
-        var urls: [URL] = []
+    public func prepareDragItems(for items: [ScreenshotItem]) -> [ScreenshotDragItem] {
+        var dragItems: [ScreenshotDragItem] = []
         for (index, item) in items.enumerated() {
-            let filename = "Screenshot \(DesktopSaver.shared.formattedDateString(from: item.createdAt)) (\(index + 1)).png"
+            let suffix = items.count > 1 ? " (\(index + 1))" : ""
+            let filename = "Screenshot \(DesktopSaver.shared.formattedDateString(from: item.createdAt))\(suffix).png"
             let fileURL = cacheDirectory.appendingPathComponent(filename)
             
             let bitmapRep = NSBitmapImageRep(cgImage: item.cgImage)
-            if let data = bitmapRep.representation(using: .png, properties: [:]) {
-                try? data.write(to: fileURL, options: .atomic)
-            }
-            urls.append(fileURL)
+            let pngData = bitmapRep.representation(using: .png, properties: [:]) ?? Data()
+            let tiffData = bitmapRep.representation(using: .tiff, properties: [:])
+            
+            try? pngData.write(to: fileURL, options: .atomic)
+            
+            let writer = ScreenshotDragItem(fileURL: fileURL, pngData: pngData, tiffData: tiffData)
+            dragItems.append(writer)
         }
-        return urls
+        return dragItems
+    }
+    
+    public func prepareCacheFiles(for items: [ScreenshotItem]) -> [URL] {
+        return prepareDragItems(for: items).map { $0.fileURL }
     }
     
     public func prepareCacheFile(for cgImage: CGImage, suggestedName: String? = nil) -> URL {
@@ -113,9 +155,14 @@ public final class DragDropManager {
     }
     
     public func cleanCache() {
-        guard let files = try? FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: nil) else { return }
+        guard let files = try? FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.contentModificationDateKey]) else { return }
+        let now = Date()
         for file in files {
-            try? FileManager.default.removeItem(at: file)
+            if let attrs = try? file.resourceValues(forKeys: [.contentModificationDateKey]),
+               let modDate = attrs.contentModificationDate,
+               now.timeIntervalSince(modDate) > 600 { // 10 minutes old
+                try? FileManager.default.removeItem(at: file)
+            }
         }
     }
 }

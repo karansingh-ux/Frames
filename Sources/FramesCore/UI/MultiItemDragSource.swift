@@ -76,15 +76,17 @@ public final class MultiItemDragNSView: NSView, NSDraggingSource {
         let windowFrame = self.window?.frame ?? .zero
         let droppedOutside = !NSMouseInRect(screenPoint, windowFrame, false)
         
-        // If the drop succeeded or was released outside the Frames card window, dismiss the dragged preview cards
+        // If the drop completed or was dropped outside the Frames preview card window
         if operation != [] || droppedOutside {
-            DispatchQueue.main.async {
-                let itemsToRemove = self.draggedItems
+            let itemsToRemove = self.draggedItems
+            // Allow 600ms grace period so target applications (ChatGPT, Claude, Slack, Figma, browsers)
+            // have sufficient time to finish streaming the image data before the preview card unmounts
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 for item in itemsToRemove {
                     AppState.shared.deleteScreenshot(item)
                 }
-                self.draggedItems.removeAll()
             }
+            self.draggedItems.removeAll()
         } else {
             self.draggedItems.removeAll()
         }
@@ -95,17 +97,17 @@ public final class MultiItemDragNSView: NSView, NSDraggingSource {
         
         self.draggedItems = items
         var draggingItems: [NSDraggingItem] = []
-        let fileURLs = DragDropManager.shared.prepareCacheFiles(for: items)
+        let writers = DragDropManager.shared.prepareDragItems(for: items)
         let total = items.count
         
         let localPoint = self.convert(event.locationInWindow, from: nil)
         let dragFrame = NSRect(x: localPoint.x - 110, y: localPoint.y - 75, width: 220, height: 150)
         
         for (index, item) in items.enumerated() {
-            guard index < fileURLs.count else { continue }
-            let fileURL = fileURLs[index]
+            guard index < writers.count else { continue }
+            let writer = writers[index]
             
-            let dragItem = NSDraggingItem(pasteboardWriter: fileURL as NSURL)
+            let dragItem = NSDraggingItem(pasteboardWriter: writer)
             let previewImage = DragDropManager.shared.createDragPreview(for: item.cgImage, totalCount: total, index: index)
             
             dragItem.setDraggingFrame(dragFrame, contents: previewImage)
