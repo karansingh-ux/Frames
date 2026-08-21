@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Sen:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Sen', system-ui, -apple-system, sans-serif;
+    color: #F8FAFC;
+    background-color: #080811;
+  }
+}
+
+/* Custom background glow effects */
+.bg-glow-radial {
+  background: radial-gradient(circle at 50% 0%, rgba(3, 2, 255, 0.22) 0%, rgba(0, 0, 49, 0.08) 55%, transparent 75%);
+}
+
+.bg-hero-glow {
+  background: radial-gradient(circle at 50% 30%, rgba(3, 2, 255, 0.18) 0%, rgba(3, 2, 255, 0.05) 50%, transparent 80%);
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #0302FF 0%, #000031 100%);
+}
+
+.brand-gradient-hover {
+  background: linear-gradient(135deg, #3D3BFF 0%, #000049 100%);
+}
+
+.glass-panel {
+  background: rgba(18, 18, 30, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(28, 28, 48, 0.85);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Viewfinder Corner Accents */
+.viewfinder-corner-tl {
+  border-top: 2px solid rgba(255, 255, 255, 0.6);
+  border-left: 2px solid rgba(255, 255, 255, 0.6);
+  border-top-left-radius: 8px;
+}
+
+.viewfinder-corner-tr {
+  border-top: 2px solid rgba(255, 255, 255, 0.6);
+  border-right: 2px solid rgba(255, 255, 255, 0.6);
+  border-top-right-radius: 8px;
+}
+
+.viewfinder-corner-bl {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+  border-left: 2px solid rgba(255, 255, 255, 0.6);
+  border-bottom-left-radius: 8px;
+}
+
+.viewfinder-corner-br {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+  border-right: 2px solid rgba(255, 255, 255, 0.6);
+  border-bottom-right-radius: 8px;
+}
+
+/* Card Stack Fan-Out Styling */
+.stack-container {
+  perspective: 1000px;
+}
+
+.stack-card {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Default stacked positions */
+.stack-card-1 { transform: translateY(0px) scale(1); z-index: 5; }
+.stack-card-2 { transform: translateY(-8px) scale(0.96); z-index: 4; opacity: 0.9; }
+.stack-card-3 { transform: translateY(-16px) scale(0.92); z-index: 3; opacity: 0.75; }
+.stack-card-4 { transform: translateY(-24px) scale(0.88); z-index: 2; opacity: 0.6; }
+.stack-card-5 { transform: translateY(-32px) scale(0.84); z-index: 1; opacity: 0.45; }
+
+/* Fan-out on hover */
+.stack-container.fanned .stack-card-1 { transform: translateX(0px) translateY(0px) rotate(0deg) scale(1); }
+.stack-container.fanned .stack-card-2 { transform: translateX(-40px) translateY(-20px) rotate(-3deg) scale(0.98); opacity: 1; }
+.stack-container.fanned .stack-card-3 { transform: translateX(-80px) translateY(-40px) rotate(-6deg) scale(0.96); opacity: 1; }
+.stack-container.fanned .stack-card-4 { transform: translateX(-120px) translateY(-60px) rotate(-9deg) scale(0.94); opacity: 1; }
+.stack-container.fanned .stack-card-5 { transform: translateX(-160px) translateY(-80px) rotate(-12deg) scale(0.92); opacity: 1; }
+
+/* Pulse Glow */
+.glow-primary {
+  box-shadow: 0 0 30px rgba(3, 2, 255, 0.35);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #080811;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(3, 2, 255, 0.5);
+}
