@@ -1,8 +1,69 @@
-import { createIcons, icons } from 'lucide';
+import {
+  createIcons,
+  Layers,
+  Camera,
+  Clipboard,
+  Download,
+  Check,
+  Star,
+  ShieldCheck,
+  Sparkles,
+  Cpu,
+  Apple,
+  Github,
+  ArrowDownRight,
+  XCircle,
+  X,
+  CheckCircle2,
+  Clock,
+  Scroll,
+  MessageSquare,
+  Lock,
+  Database,
+  CloudOff,
+  Shield,
+  ChevronDown,
+  Wifi,
+  BatteryCharging,
+  AlertTriangle,
+  Info,
+  ClipboardCheck
+} from 'lucide';
 
-// Initialize Lucide Icons
+// Initialize Selected Lucide Icons for optimal performance
 function initIcons() {
-  createIcons({ icons });
+  createIcons({
+    icons: {
+      Layers,
+      Camera,
+      Clipboard,
+      Download,
+      Check,
+      Star,
+      ShieldCheck,
+      Sparkles,
+      Cpu,
+      Apple,
+      Github,
+      ArrowDownRight,
+      XCircle,
+      X,
+      CheckCircle2,
+      Clock,
+      Scroll,
+      MessageSquare,
+      Lock,
+      Database,
+      CloudOff,
+      Shield,
+      ChevronDown,
+      Wifi,
+      BatteryCharging,
+      AlertTriangle,
+      Info,
+      ClipboardCheck
+    }
+  });
 }
 
 // 60-Second Timer Engine for Hero Preview
@@ -46,11 +107,11 @@ function showToast(message: string, type: 'success' | 'info' | 'warning' = 'succ
   if (!container) return;
 
   const toast = document.createElement('div');
-  const bgClass = type === 'success' ? 'border-emerald-500/40 bg-emerald-950/80 text-emerald-200' :
-                  type === 'warning' ? 'border-amber-500/40 bg-amber-950/80 text-amber-200' :
-                  'border-brand-electric/40 bg-brand-midnight/90 text-blue-200';
+  const bgClass = type === 'success' ? 'border-emerald-500/40 bg-emerald-950/90 text-emerald-200' :
+                  type === 'warning' ? 'border-amber-500/40 bg-amber-950/90 text-amber-200' :
+                  'border-brand-electric/40 bg-[#000031]/95 text-blue-200';
 
-  toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-xl shadow-2xl transition-all duration-300 transform translate-y-4 opacity-0 ${bgClass}`;
+  toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-xl shadow-2xl transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-auto ${bgClass}`;
   
   let iconName = type === 'success' ? 'check-circle-2' : type === 'warning' ? 'alert-triangle' : 'info';
   

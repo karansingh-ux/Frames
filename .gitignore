@@ -19,3 +19,5 @@ build/
 # Environment / AI Scratch
 .gemini/
 node_modules/
+website/dist/
+dist/
