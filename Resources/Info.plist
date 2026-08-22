@@ -32,5 +32,17 @@
     <string>AppIcon</string>
     <key>NSScreenCaptureUsageDescription</key>
     <string>Frames requires Screen Recording permission to capture full-screen and area screenshots.</string>
+    
+    <!-- Sparkle Automatic Update Configuration -->
+    <key>SUFeedURL</key>
+    <string>https://framesapp.com/appcast.xml</string>
+    <key>SUPublicEDKey</key>
+    <string>8tGlAmxubKSM7gyf70iSvLiz1Y2cHDfvAu5gpGhM0Qc=</string>
+    <key>SUEnableAutomaticChecks</key>
+    <true/>
+    <key>SUAllowsAutomaticUpdates</key>
+    <true/>
+    <key>SUScheduledCheckInterval</key>
+    <integer>86400</integer>
 </dict>
 </plist>

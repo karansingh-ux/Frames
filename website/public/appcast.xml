@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Frames Changelog</title>
+        <link>https://framesapp.com/appcast.xml</link>
+        <description>Most recent updates to Frames macOS.</description>
+        <language>en</language>
+        <item>
+            <title>Frames 1.0.0</title>
+            <pubDate>Sun, 23 Aug 2026 02:22:10 +0530</pubDate>
+            <sparkle:releaseNotesLink>https://framesapp.com/releases/1.0.0.html</sparkle:releaseNotesLink>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <enclosure
+                url="https://framesapp.com/downloads/Frames.zip"
+                sparkle:version="1"
+                sparkle:shortVersionString="1.0.0"
+                length="2921715"
+                type="application/octet-stream"
+                sparkle:edSignature="NHYXpwVbOvKuMjDDYIqtbhEuNrT3il7ekXTu/yUUrZxpEOx/ALzIa7rg+6WbVcy+4MLeie5g3aEXD93pMa14AQ==" />
+        </item>
+    </channel>
+</rss>

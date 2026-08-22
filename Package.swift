@@ -10,11 +10,15 @@ let package = Package(
         .executable(name: "Frames", targets: ["Frames"]),
         .executable(name: "FramesVerification", targets: ["FramesVerification"])
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.0")
+    ],
     targets: [
         .target(
             name: "FramesCore",
-            dependencies: [],
+            dependencies: [
+                .product(name: "Sparkle", package: "Sparkle")
+            ],
             path: "Sources/FramesCore"
         ),
         .executableTarget(

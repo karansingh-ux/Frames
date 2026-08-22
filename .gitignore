@@ -19,7 +19,5 @@ Export/
 *.zip
 *.xcuserstate
 
-# Website build & downloads
-website/dist/
-website/public/downloads/
-dist/
+# Sparkle private keys
+Scripts/sparkle_keys.json
