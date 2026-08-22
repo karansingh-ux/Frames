@@ -12,12 +12,14 @@ xcuserdata/
 *.xcworkspace/xcuserdata/
 DerivedData/
 
-# Temporary / Local Build artifacts (Export/ contains the release deliverables)
+# Temporary / Local Build artifacts
 build/
+Export/
+*.dmg
+*.zip
 *.xcuserstate
 
-# Environment / AI Scratch
-.gemini/
-node_modules/
+# Website build & downloads
 website/dist/
+website/public/downloads/
 dist/

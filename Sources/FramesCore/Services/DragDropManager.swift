@@ -154,6 +154,23 @@ public final class DragDropManager {
         return canvas
     }
     
+    public func removeCache(for item: ScreenshotItem) {
+        let dateStr = DesktopSaver.shared.formattedDateString(from: item.createdAt)
+        guard let files = try? FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: nil) else { return }
+        for file in files {
+            if file.lastPathComponent.contains(dateStr) {
+                try? FileManager.default.removeItem(at: file)
+            }
+        }
+    }
+    
+    public func purgeAllCache() {
+        guard let files = try? FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: nil) else { return }
+        for file in files {
+            try? FileManager.default.removeItem(at: file)
+        }
+    }
+    
     public func cleanCache() {
         guard let files = try? FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.contentModificationDateKey]) else { return }
         let now = Date()

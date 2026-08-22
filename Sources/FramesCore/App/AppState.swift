@@ -132,12 +132,13 @@ public final class AppState: ObservableObject {
     
     public func deleteScreenshot(_ item: ScreenshotItem) {
         item.stopTimer()
+        DragDropManager.shared.removeCache(for: item)
         activeScreenshots.removeAll(where: { $0.id == item.id })
         
         if activeScreenshots.isEmpty {
             isExpanded = false
             cornerPanel?.orderOut(nil)
-            DragDropManager.shared.cleanCache()
+            DragDropManager.shared.purgeAllCache()
         } else {
             if activeScreenshots.count <= 1 {
                 isExpanded = false

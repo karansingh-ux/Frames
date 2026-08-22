@@ -3,7 +3,7 @@
 [![Platform](https://img.shields.io/badge/platform-macOS%2013.0%2B-blue.svg)](https://apple.com/macos)
 [![Swift](https://img.shields.io/badge/Swift-5.9%20%7C%206.0-orange.svg)](https://swift.org)
 [![Architecture](https://img.shields.io/badge/arch-Universal%20(arm64%20%2B%20x86__64)-purple.svg)]()
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
 
 **Frames** is a native, ultra-fast macOS menu-bar screenshot utility designed to eliminate desktop clutter. It keeps screenshots temporarily accessible in a floating preview stack (up to 5 cards) in the bottom-right corner, giving you time to copy, save, annotate, or drag-and-drop before anything touches your disk.
 
@@ -20,7 +20,7 @@
 * **Zero History / Zero Disk Clutter:** Pure in-memory ephemeral architecture. No databases, no background libraries, no cloud sync, and zero telemetry.
 * **Configurable Lifecycles:** Configurable countdown timer (60s, 90s, 120s) with pause-on-hover and auto-save fallback.
 * **Instant Native Shutter Sound:** Satisfying macOS camera shutter audio feedback on capture (with General Settings toggle).
-* **Built-in Problem Reporting:** One-click bug and problem report generator pre-addressed to `buildbetterwithme@gmail.com`.
+* **Automatic Update Checking:** Checks for new releases via the GitHub Releases API with one-click browser download prompts.
 
 ---
 
@@ -38,18 +38,20 @@
 ## 🚀 Installation & Download
 
 ### Option 1: Direct Download (Ready to Run)
-1. Download the latest release from the [Releases](https://github.com/karansingh-ux/Frames/releases) tab:
-   - **`Frames.dmg`** (Disk Image installer)
-   - **`Frames.zip`** (Direct portable app bundle)
+1. Download the latest **`Frames.dmg`** from the [Releases](https://github.com/karansingh-ux/Frames/releases) page.
 2. Open `Frames.dmg` and drag **Frames.app** to your `/Applications` folder.
-3. Launch Frames from Applications. Grant **Screen Recording** permission when prompted in macOS System Settings.
+3. **First-Time macOS Launch Note:**  
+   Because Frames is a free, independent open-source project without a paid corporate certificate:
+   * **Right-click `Frames.app` in Applications → Select Open → Click Open** (only needed once on first launch).  
+   * *(Alternatively, go to macOS **System Settings → Privacy & Security** and click **"Open Anyway"**).*
+4. Grant **Screen Recording** permission when prompted in macOS System Settings.
 
 ---
 
 ## 🛠 Building from Source
 
 ### Requirements
-* macOS 13.0 (Ventura) or later
+* macOS 14.0 (Sonoma) or later
 * Xcode 15+ / Command Line Tools with Swift 5.9+
 
 ### Build Steps
@@ -58,7 +60,7 @@
 git clone https://github.com/karansingh-ux/Frames.git
 cd Frames
 
-# Run comprehensive test suite
+# Run test suite
 swift run FramesVerification
 
 # Build release app bundle and export packages (DMG & ZIP)
@@ -69,16 +71,23 @@ Compiled application bundle will be output to `build/Frames.app` and distributio
 
 ---
 
-## 🏗 Architecture & Technologies
+## 🤝 Contributing
 
-* **AppKit (`NSPanel`, `NSStatusItem`, `NSDraggingSource`):** Low-level macOS system integration, floating non-activating panel rendering, and multi-file pasteboard drag sessions.
-* **SwiftUI:** Modern native declarative views for corner card overlays, settings windows, and annotation tools.
-* **ScreenCaptureKit & CoreGraphics:** High-performance hardware-accelerated Retina screen captures with automatic window self-exclusion.
-* **Carbon Event Manager:** System-wide global hotkeys with zero input lag.
-* **AudioToolbox:** C-level `AudioServicesPlaySystemSound` for instant shutter audio playback.
+Contributions, bug reports, and feature suggestions are welcome!
+
+### Contributor Agreement
+By submitting a Pull Request or contributing code to the Frames repository, you agree that your contributions will be licensed under the project's **GNU General Public License v3.0 (GPL-3.0)** and grant the project owner the right to include them in official project distributions and releases.
+
+To contribute:
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/amazing-feature`).
+3. Commit your changes (`git commit -m 'Add amazing feature'`).
+4. Push to the branch (`git push origin feature/amazing-feature`).
+5. Open a Pull Request.
 
 ---
 
-## 📄 License
+## 📄 License & Trademark Notice
 
-This project is open-source software licensed under the [MIT License](LICENSE).
+* **Source Code:** Licensed under the [GNU General Public License v3.0 (GPL-3.0)](LICENSE).
+* **Trademark & Branding:** The project name **"Frames"**, official logos, icons, and brand design assets remain the exclusive property of Karan Singh.
