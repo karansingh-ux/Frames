@@ -10,7 +10,7 @@ public final class CornerCardPanel: NSPanel {
         self.targetDisplayID = displayID
         
         super.init(
-            contentRect: NSRect(x: 0, y: 0, width: 340, height: 240),
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 850),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -35,7 +35,7 @@ public final class CornerCardPanel: NSPanel {
         updateLayout(isExpanded: appState.isExpanded, count: appState.activeScreenshots.count, displayID: displayID, animate: false)
     }
     
-    public func updateLayout(isExpanded: Bool, count: Int, displayID: CGDirectDisplayID? = nil, animate: Bool = true) {
+    public func updateLayout(isExpanded: Bool, count: Int, displayID: CGDirectDisplayID? = nil, animate: Bool = false) {
         if let dID = displayID {
             self.targetDisplayID = dID
         }
@@ -52,31 +52,18 @@ public final class CornerCardPanel: NSPanel {
         let cardHeight: CGFloat = 150
         let arrowWidth: CGFloat = 36
         let padding: CGFloat = 20
-        let effectiveCount = max(1, count)
         
-        let panelWidth: CGFloat
-        let panelHeight: CGFloat
+        // Fixed, stable window geometry so window origin NEVER moves or jumps on new captures
+        let panelWidth: CGFloat = cardWidth + arrowWidth + 12 + (padding * 2)
+        let panelHeight: CGFloat = (5.0 * cardHeight) + (4.0 * 12.0) + (padding * 2)
         
-        if isExpanded && effectiveCount > 1 {
-            // Expanded vertically upward
-            panelWidth = cardWidth + arrowWidth + 12 + (padding * 2)
-            panelHeight = CGFloat(effectiveCount) * cardHeight + CGFloat(effectiveCount - 1) * 12.0 + (padding * 2)
-        } else if effectiveCount > 1 {
-            // Collapsed stack of 2..5 cards
-            let cascadeShift = CGFloat(effectiveCount - 1) * 8.0
-            panelWidth = cardWidth + cascadeShift + arrowWidth + 12 + (padding * 2)
-            panelHeight = cardHeight + cascadeShift + (padding * 2)
-        } else {
-            // Single card
-            panelWidth = cardWidth + (padding * 2)
-            panelHeight = cardHeight + (padding * 2)
-        }
-        
-        // Exact 24px margin from screen bottom and right edges (accounting for 20px transparent inner padding)
+        // Exact fixed 24px margin from screen bottom and right edges
         let x = visibleFrame.maxX - panelWidth - (24.0 - padding)
         let y = visibleFrame.minY + (24.0 - padding)
         
-        let newFrame = NSRect(x: x, y: y, width: panelWidth, height: panelHeight)
-        self.setFrame(newFrame, display: true, animate: animate)
+        let targetFrame = NSRect(x: x, y: y, width: panelWidth, height: panelHeight)
+        if self.frame != targetFrame {
+            self.setFrame(targetFrame, display: true, animate: false)
+        }
     }
 }

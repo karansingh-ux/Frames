@@ -72,19 +72,19 @@
   transform-origin: bottom right;
 }
 
-/* Default clean stacked positions */
+/* Default clean stacked positions (Neatly aligned directly behind with upward peek) */
 .stack-card-1 { transform: translateY(0px) scale(1); z-index: 10; }
-.stack-card-2 { transform: translateY(-8px) translateX(-6px) scale(0.96); z-index: 8; opacity: 0.85; }
-.stack-card-3 { transform: translateY(-16px) translateX(-12px) scale(0.92); z-index: 6; opacity: 0.65; }
-.stack-card-4 { transform: translateY(-24px) translateX(-18px) scale(0.88); z-index: 4; opacity: 0.45; }
-.stack-card-5 { transform: translateY(-32px) translateX(-24px) scale(0.84); z-index: 2; opacity: 0.25; }
+.stack-card-2 { transform: translateY(-7px) scale(0.98); z-index: 8; opacity: 0.92; }
+.stack-card-3 { transform: translateY(-14px) scale(0.96); z-index: 6; opacity: 0.84; }
+.stack-card-4 { transform: translateY(-21px) scale(0.94); z-index: 4; opacity: 0.76; }
+.stack-card-5 { transform: translateY(-28px) scale(0.92); z-index: 2; opacity: 0.68; }
 
-/* Fan-out on hover */
-.stack-container:hover .stack-card-1 { transform: translateX(0px) translateY(0px) scale(1); z-index: 10; }
-.stack-container:hover .stack-card-2 { transform: translateX(-50px) translateY(-25px) rotate(-2.5deg) scale(0.96); z-index: 8; opacity: 1; }
-.stack-container:hover .stack-card-3 { transform: translateX(-100px) translateY(-50px) rotate(-5deg) scale(0.92); z-index: 6; opacity: 1; }
-.stack-container:hover .stack-card-4 { transform: translateX(-150px) translateY(-75px) rotate(-7.5deg) scale(0.88); z-index: 4; opacity: 1; }
-.stack-container:hover .stack-card-5 { transform: translateX(-200px) translateY(-100px) rotate(-10deg) scale(0.84); z-index: 2; opacity: 1; }
+/* Smooth vertical expansion on hover/click */
+.stack-container:hover .stack-card-1 { transform: translateY(0px) scale(1); z-index: 10; }
+.stack-container:hover .stack-card-2 { transform: translateY(-55px) scale(1); z-index: 8; opacity: 1; }
+.stack-container:hover .stack-card-3 { transform: translateY(-110px) scale(1); z-index: 6; opacity: 1; }
+.stack-container:hover .stack-card-4 { transform: translateY(-165px) scale(1); z-index: 4; opacity: 1; }
+.stack-container:hover .stack-card-5 { transform: translateY(-220px) scale(1); z-index: 2; opacity: 1; }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {

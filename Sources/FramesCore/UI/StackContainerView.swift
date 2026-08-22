@@ -4,17 +4,24 @@ import AppKit
 public struct StackContainerView: View {
     @ObservedObject var appState: AppState
     
+    // Smooth, gentle macOS native spring curve (subtle, refined, no jarring snap)
+    private var stackSpringAnimation: Animation {
+        .spring(response: 0.48, dampingFraction: 0.88, blendDuration: 0.15)
+    }
+    
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            if appState.isExpanded && appState.activeScreenshots.count > 1 {
-                // Expanded View: Vertical upward arrangement of individual floating cards with 12px gaps
-                HStack(alignment: .bottom, spacing: 12) {
-                    // Arrow Button on the Left of the bottom card
+            // Main Cards Stack & Button Container (Always pinned to bottomTrailing)
+            HStack(alignment: .bottom, spacing: 12) {
+                // Stack Count & Chevron Toggle Button (Visible when count > 1)
+                if appState.activeScreenshots.count > 1 {
                     Button(action: {
-                        appState.toggleExpanded()
+                        withAnimation(stackSpringAnimation) {
+                            appState.toggleExpanded()
+                        }
                     }) {
                         VStack(spacing: 3) {
-                            Image(systemName: "chevron.down")
+                            Image(systemName: appState.isExpanded ? "chevron.down" : "chevron.up")
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(.white)
                             
@@ -36,103 +43,54 @@ public struct StackContainerView: View {
                         .shadow(color: Color.black.opacity(0.4), radius: 6, x: 0, y: 2)
                     }
                     .buttonStyle(.plain)
-                    .help("Collapse screenshot stack")
+                    .help(appState.isExpanded ? "Collapse screenshot stack" : "Expand screenshot stack (\(appState.activeScreenshots.count))")
                     .padding(.bottom, 50)
-                    .zIndex(999)
-                    
-                    // Vertical stack of cards (Screenshot 5 at top down to Screenshot 1 at bottom)
-                    VStack(spacing: 12) {
-                        ForEach(appState.activeScreenshots.reversed()) { item in
-                            MultiItemDragSource(items: { [item] }) {
-                                CornerCardView(
-                                    item: item,
-                                    isTopCard: true,
-                                    isExpanded: true,
-                                    onCopy: { appState.copyScreenshot(item) },
-                                    onSave: { appState.saveScreenshot(item) },
-                                    onDelete: { appState.deleteScreenshot(item) },
-                                    onEdit: { appState.openEditor(for: item) }
-                                )
-                            }
-                        }
-                    }
+                    .transition(.opacity.combined(with: .scale(scale: 0.85, anchor: .bottom)))
+                    .zIndex(1000)
                 }
-                .transition(.opacity)
-            } else if appState.activeScreenshots.count > 1 {
-                // Collapsed Stack View: Multiple cards overlapping by 8px with arrow button clearly visible on left
-                let maxShift = CGFloat(appState.activeScreenshots.count - 1) * 8.0
                 
-                HStack(alignment: .bottom, spacing: 12) {
-                    // Arrow Button on Left (never covered by any card)
-                    Button(action: {
-                        appState.toggleExpanded()
-                    }) {
-                        VStack(spacing: 3) {
-                            Image(systemName: "chevron.up")
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(.white)
-                            
-                            Text("\(appState.activeScreenshots.count)")
-                                .font(.system(size: 10, weight: .bold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.9))
+                // Unified Cards Layer
+                ZStack(alignment: .bottomTrailing) {
+                    ForEach(Array(appState.activeScreenshots.enumerated()), id: \.element.id) { index, item in
+                        let offsetIndex = (appState.activeScreenshots.count - 1) - index
+                        let isTop = index == appState.activeScreenshots.count - 1
+                        
+                        // Vertical and Scale math:
+                        // Collapsed: Top card is at 0, older cards peek subtly upward (-7px) directly behind
+                        // Expanded: Cards glide smoothly into individual vertical slots (-162px each)
+                        let targetYOffset: CGFloat = appState.isExpanded
+                            ? CGFloat(offsetIndex) * -162.0
+                            : CGFloat(offsetIndex) * -7.0
+                        
+                        let targetScale: CGFloat = appState.isExpanded
+                            ? 1.0
+                            : 1.0 - (CGFloat(offsetIndex) * 0.02)
+                        
+                        let targetOpacity: Double = appState.isExpanded
+                            ? 1.0
+                            : 1.0 - (Double(offsetIndex) * 0.06)
+                        
+                        MultiItemDragSource(items: {
+                            appState.isExpanded ? [item] : appState.activeScreenshots
+                        }) {
+                            CornerCardView(
+                                item: item,
+                                isTopCard: isTop,
+                                isExpanded: appState.isExpanded,
+                                onCopy: { appState.copyScreenshot(item) },
+                                onSave: { appState.saveScreenshot(item) },
+                                onDelete: { appState.deleteScreenshot(item) },
+                                onEdit: { appState.openEditor(for: item) }
+                            )
+                            .scaleEffect(targetScale, anchor: .bottom)
+                            .opacity(targetOpacity)
+                            .offset(x: 0, y: targetYOffset)
+                            .zIndex(Double(index))
+                            .animation(stackSpringAnimation, value: appState.isExpanded)
                         }
-                        .frame(width: 28, height: 44)
-                        .background(
-                            Capsule()
-                                .fill(Color.black.opacity(0.85))
-                                .background(.ultraThinMaterial)
-                        )
-                        .clipShape(Capsule())
-                        .overlay(
-                            Capsule()
-                                .stroke(Color.white.opacity(0.25), lineWidth: 1)
-                        )
-                        .shadow(color: Color.black.opacity(0.4), radius: 6, x: 0, y: 2)
-                    }
-                    .buttonStyle(.plain)
-                    .help("Expand screenshot stack (\(appState.activeScreenshots.count))")
-                    .padding(.bottom, 50)
-                    .zIndex(999)
-                    
-                    // Cascaded Cards Container with native multi-item drag support
-                    MultiItemDragSource(items: { appState.activeScreenshots }) {
-                        ZStack(alignment: .bottomTrailing) {
-                            ForEach(Array(appState.activeScreenshots.enumerated()), id: \.element.id) { index, item in
-                                let offsetIndex = (appState.activeScreenshots.count - 1) - index
-                                let xOffset = CGFloat(offsetIndex) * -8.0
-                                let yOffset = CGFloat(offsetIndex) * -8.0
-                                
-                                CornerCardView(
-                                    item: item,
-                                    isTopCard: index == appState.activeScreenshots.count - 1,
-                                    isExpanded: false,
-                                    onCopy: { appState.copyScreenshot(item) },
-                                    onSave: { appState.saveScreenshot(item) },
-                                    onDelete: { appState.deleteScreenshot(item) },
-                                    onEdit: { appState.openEditor(for: item) }
-                                )
-                                .offset(x: xOffset, y: yOffset)
-                                .zIndex(Double(index))
-                            }
-                        }
-                        .frame(width: 220 + maxShift, height: 150 + maxShift, alignment: .bottomTrailing)
                     }
                 }
-                .transition(.opacity)
-            } else if let singleItem = appState.activeScreenshots.first {
-                // Exactly One Screenshot Card with native drag support
-                MultiItemDragSource(items: { [singleItem] }) {
-                    CornerCardView(
-                        item: singleItem,
-                        isTopCard: true,
-                        isExpanded: false,
-                        onCopy: { appState.copyScreenshot(singleItem) },
-                        onSave: { appState.saveScreenshot(singleItem) },
-                        onDelete: { appState.deleteScreenshot(singleItem) },
-                        onEdit: { appState.openEditor(for: singleItem) }
-                    )
-                }
-                .transition(.opacity)
+                .frame(width: 220, height: 150, alignment: .bottomTrailing)
             }
             
             // Toast Overlay (e.g. "Saved to Desktop")
@@ -141,7 +99,7 @@ public struct StackContainerView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .padding(.bottom, 4)
                     .padding(.trailing, 4)
-                    .zIndex(1000)
+                    .zIndex(2000)
             }
             
             // Limit Reached Alert
@@ -150,12 +108,11 @@ public struct StackContainerView: View {
                     .transition(.scale.combined(with: .opacity))
                     .padding(.bottom, 4)
                     .padding(.trailing, 4)
-                    .zIndex(1001)
+                    .zIndex(2001)
             }
         }
         .padding(20)
-        .animation(.easeInOut(duration: 0.2), value: appState.isExpanded)
-        .animation(.easeInOut(duration: 0.2), value: appState.activeScreenshots.count)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
     }
 }
 

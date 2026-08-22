@@ -15,7 +15,7 @@ public struct CornerCardView: View {
     
     public var body: some View {
         ZStack {
-            // Preview Image
+            // 1. Preview Image
             Image(nsImage: item.nsImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -23,10 +23,10 @@ public struct CornerCardView: View {
                 .background(Color.black.opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             
-            // Translucent overlay controls (visible on top card, when expanded, or on hover)
+            // 2. Translucent overlay controls (visible on top card, when expanded, or on hover)
             if isTopCard || isExpanded || isHovering {
+                // Top controls bar
                 VStack {
-                    // Top controls bar
                     HStack {
                         // Cancel / Delete (X) button
                         Button(action: onDelete) {
@@ -65,40 +65,60 @@ public struct CornerCardView: View {
                     .padding(8)
                     
                     Spacer()
-                    
-                    // Center / Bottom Action Buttons: Copy and Save
-                    HStack(spacing: 16) {
-                        // Copy Button
-                        Button(action: onCopy) {
-                            VStack(spacing: 3) {
-                                Image(systemName: "doc.on.doc")
-                                    .font(.system(size: 13, weight: .semibold))
-                                Text("Copy")
-                                    .font(.system(size: 10, weight: .medium))
-                            }
-                            .foregroundColor(.white)
-                            .frame(width: 52, height: 42)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.black.opacity(0.8)))
+                }
+                
+                // Centered Side-by-Side Pill Action Buttons (Dead-Center Vertically and Horizontally)
+                HStack(spacing: 5) {
+                    // Copy Pill Button
+                    Button(action: onCopy) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "doc.on.doc")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("Copy")
+                                .font(.system(size: 11, weight: .semibold))
                         }
-                        .buttonStyle(.plain)
-                        .help("Copy to clipboard (no file saved)")
-                        
-                        // Save Button
-                        Button(action: onSave) {
-                            VStack(spacing: 3) {
-                                Image(systemName: "arrow.down.to.line")
-                                    .font(.system(size: 13, weight: .semibold))
-                                Text("Save")
-                                    .font(.system(size: 10, weight: .medium))
-                            }
-                            .foregroundColor(.white)
-                            .frame(width: 52, height: 42)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.accentColor.opacity(0.9)))
-                        }
-                        .buttonStyle(.plain)
-                        .help("Save to Desktop")
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule()
+                                .fill(Color.black.opacity(0.85))
+                                .background(.ultraThinMaterial)
+                        )
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.white.opacity(0.25), lineWidth: 1)
+                        )
+                        .shadow(color: Color.black.opacity(0.35), radius: 4, x: 0, y: 2)
                     }
-                    .padding(.bottom, 10)
+                    .buttonStyle(.plain)
+                    .help("Copy to clipboard (no file saved)")
+                    
+                    // Save Pill Button
+                    Button(action: onSave) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "arrow.down.to.line")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("Save")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule()
+                                .fill(Color.accentColor.opacity(0.95))
+                        )
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                        )
+                        .shadow(color: Color.black.opacity(0.35), radius: 4, x: 0, y: 2)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Save to Desktop")
                 }
             }
         }
