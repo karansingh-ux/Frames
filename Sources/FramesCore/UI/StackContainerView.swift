@@ -6,7 +6,7 @@ public struct StackContainerView: View {
     
     // Smooth, gentle macOS native spring curve (subtle, refined, no jarring snap)
     private var stackSpringAnimation: Animation {
-        .spring(response: 0.48, dampingFraction: 0.88, blendDuration: 0.15)
+        .spring(response: 0.44, dampingFraction: 0.88, blendDuration: 0.15)
     }
     
     public var body: some View {
@@ -49,54 +49,75 @@ public struct StackContainerView: View {
                     .zIndex(1000)
                 }
                 
-                // Unified Cards Layer
-                let totalCount = appState.activeScreenshots.count
-                let expandedHeight = CGFloat(totalCount) * 150.0 + CGFloat(max(0, totalCount - 1)) * 12.0
-                let collapsedHeight = 150.0 + CGFloat(max(0, totalCount - 1)) * 7.0
-                
-                ZStack(alignment: .bottomTrailing) {
-                    ForEach(Array(appState.activeScreenshots.enumerated()), id: \.element.id) { index, item in
-                        let offsetIndex = (appState.activeScreenshots.count - 1) - index
-                        let isTop = index == appState.activeScreenshots.count - 1
-                        
-                        // Vertical and Scale math:
-                        // Collapsed: Top card is at 0, older cards peek subtly upward (-7px) directly behind
-                        // Expanded: Cards glide smoothly into individual vertical slots (-162px each)
-                        let targetYOffset: CGFloat = appState.isExpanded
-                            ? CGFloat(offsetIndex) * -162.0
-                            : CGFloat(offsetIndex) * -7.0
-                        
-                        let targetScale: CGFloat = appState.isExpanded
-                            ? 1.0
-                            : 1.0 - (CGFloat(offsetIndex) * 0.02)
-                        
-                        let targetOpacity: Double = appState.isExpanded
-                            ? 1.0
-                            : 1.0 - (Double(offsetIndex) * 0.06)
-                        
-                        MultiItemDragSource(items: {
-                            appState.isExpanded ? [item] : appState.activeScreenshots
-                        }) {
-                            CornerCardView(
-                                item: item,
-                                isTopCard: isTop,
-                                isExpanded: appState.isExpanded,
-                                onCopy: { appState.copyScreenshot(item) },
-                                onSave: { appState.saveScreenshot(item) },
-                                onDelete: { appState.deleteScreenshot(item) },
-                                onEdit: { appState.openEditor(for: item) }
-                            )
-                            .scaleEffect(targetScale, anchor: .bottom)
-                            .opacity(targetOpacity)
-                            .offset(x: 0, y: targetYOffset)
-                            .zIndex(Double(index))
-                            .animation(stackSpringAnimation, value: appState.isExpanded)
+                // Cards Layer
+                if appState.isExpanded && appState.activeScreenshots.count > 1 {
+                    // Expanded Mode: Real physical vertical layout so every card receives 100% mouse clicks & gestures
+                    VStack(spacing: 12) {
+                        ForEach(Array(appState.activeScreenshots.reversed()), id: \.id) { item in
+                            MultiItemDragSource(items: { [item] }) {
+                                CornerCardView(
+                                    item: item,
+                                    isTopCard: true,
+                                    isExpanded: true,
+                                    onCopy: { appState.copyScreenshot(item) },
+                                    onSave: { appState.saveScreenshot(item) },
+                                    onDelete: { appState.deleteScreenshot(item) },
+                                    onEdit: { appState.openEditor(for: item) }
+                                )
+                            }
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .scale(scale: 0.95, anchor: .bottom)),
+                                removal: .opacity.combined(with: .scale(scale: 0.85))
+                            ))
                         }
                     }
+                    .frame(width: 220, alignment: .bottomTrailing)
+                } else if appState.activeScreenshots.count > 1 {
+                    // Collapsed Stack Mode: Neatly layered deck directly behind with subtle upward peek
+                    ZStack(alignment: .bottomTrailing) {
+                        ForEach(Array(appState.activeScreenshots.enumerated()), id: \.element.id) { index, item in
+                            let offsetIndex = (appState.activeScreenshots.count - 1) - index
+                            let isTop = index == appState.activeScreenshots.count - 1
+                            let targetYOffset: CGFloat = CGFloat(offsetIndex) * -7.0
+                            let targetScale: CGFloat = 1.0 - (CGFloat(offsetIndex) * 0.02)
+                            let targetOpacity: Double = 1.0 - (Double(offsetIndex) * 0.06)
+                            
+                            MultiItemDragSource(items: { appState.activeScreenshots }) {
+                                CornerCardView(
+                                    item: item,
+                                    isTopCard: isTop,
+                                    isExpanded: false,
+                                    onCopy: { appState.copyScreenshot(item) },
+                                    onSave: { appState.saveScreenshot(item) },
+                                    onDelete: { appState.deleteScreenshot(item) },
+                                    onEdit: { appState.openEditor(for: item) }
+                                )
+                                .scaleEffect(targetScale, anchor: .bottom)
+                                .opacity(targetOpacity)
+                                .offset(x: 0, y: targetYOffset)
+                                .zIndex(Double(index))
+                            }
+                        }
+                    }
+                    .frame(width: 220, height: 150 + CGFloat(max(0, appState.activeScreenshots.count - 1)) * 7.0, alignment: .bottomTrailing)
+                } else if let singleItem = appState.activeScreenshots.first {
+                    // Single Card Mode
+                    MultiItemDragSource(items: { [singleItem] }) {
+                        CornerCardView(
+                            item: singleItem,
+                            isTopCard: true,
+                            isExpanded: false,
+                            onCopy: { appState.copyScreenshot(singleItem) },
+                            onSave: { appState.saveScreenshot(singleItem) },
+                            onDelete: { appState.deleteScreenshot(singleItem) },
+                            onEdit: { appState.openEditor(for: singleItem) }
+                        )
+                    }
+                    .frame(width: 220, height: 150, alignment: .bottomTrailing)
                 }
-                .frame(width: 220, height: appState.isExpanded ? expandedHeight : collapsedHeight, alignment: .bottomTrailing)
-                .animation(stackSpringAnimation, value: appState.isExpanded)
             }
+            .animation(stackSpringAnimation, value: appState.isExpanded)
+            .animation(stackSpringAnimation, value: appState.activeScreenshots.count)
             
             // Toast Overlay (e.g. "Saved to Desktop")
             if let toastMessage = appState.activeToastMessage {
