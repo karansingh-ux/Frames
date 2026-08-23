@@ -69,24 +69,23 @@ public final class AppState: ObservableObject {
             return
         }
         
-        let mouseLocation = NSEvent.mouseLocation
-        let targetScreen = NSScreen.screens.first(where: { NSMouseInRect(mouseLocation, $0.frame, false) }) ?? NSScreen.main
-        guard let idNum = targetScreen?.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber else {
-            return
-        }
-        let displayID = idNum.uint32Value
-        
-        Task { @MainActor in
-            do {
-                let image = try await SelectionOverlayController.shared.startSelection(on: targetScreen ?? NSScreen.main!, excludedWindowIDs: self.activeOverlayWindowIDs)
-                self.playCaptureSound()
-                self.addScreenshot(cgImage: image, displayID: displayID)
-            } catch {
-                NSLog("[Frames] Area capture failed: \(error.localizedDescription)")
-                if !PermissionsManager.shared.hasScreenCapturePermission {
-                    PermissionsManager.shared.requestScreenCapturePermission()
-                    PermissionsManager.shared.openScreenCaptureSettings()
-                    self.showToast("Please allow Screen Recording in System Settings")
+        AreaSelectionManager.shared.startSelection { [weak self] selectedRect, displayID in
+            guard let self = self, let rect = selectedRect, let dID = displayID else {
+                return
+            }
+            
+            Task { @MainActor in
+                do {
+                    let image = try await CaptureEngine.shared.captureRect(rect, displayID: dID, excludedWindowIDs: self.activeOverlayWindowIDs)
+                    self.playCaptureSound()
+                    self.addScreenshot(cgImage: image, displayID: dID)
+                } catch {
+                    NSLog("[Frames] Area capture failed: \(error.localizedDescription)")
+                    if !PermissionsManager.shared.hasScreenCapturePermission {
+                        PermissionsManager.shared.requestScreenCapturePermission()
+                        PermissionsManager.shared.openScreenCaptureSettings()
+                        self.showToast("Please allow Screen Recording in System Settings")
+                    }
                 }
             }
         }
