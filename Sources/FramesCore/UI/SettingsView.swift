@@ -399,7 +399,7 @@ public struct SupportSettingsSection: View {
             
             // Primary Support Action Button
             Button(action: {
-                if let url = URL(string: "https://buymeacoffee.com") {
+                if let url = URL(string: "https://buymeacoffee.com/karan01") {
                     NSWorkspace.shared.open(url)
                 }
             }) {
