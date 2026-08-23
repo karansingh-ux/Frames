@@ -69,12 +69,20 @@ public final class AppState: ObservableObject {
             return
         }
         
+        let mouseLocation = NSEvent.mouseLocation
+        let targetScreen = NSScreen.screens.first(where: { NSMouseInRect(mouseLocation, $0.frame, false) }) ?? NSScreen.main
+        guard let idNum = targetScreen?.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber else {
+            return
+        }
+        let displayID = idNum.uint32Value
+        
         Task { @MainActor in
             do {
-                let (image, displayID) = try await CaptureEngine.shared.startAreaSelection(excludedWindowIDs: self.activeOverlayWindowIDs)
+                let image = try await SelectionOverlayController.shared.startSelection(on: targetScreen ?? NSScreen.main!, excludedWindowIDs: self.activeOverlayWindowIDs)
                 self.playCaptureSound()
                 self.addScreenshot(cgImage: image, displayID: displayID)
             } catch {
+                NSLog("[Frames] Area capture failed: \(error.localizedDescription)")
                 if !PermissionsManager.shared.hasScreenCapturePermission {
                     PermissionsManager.shared.requestScreenCapturePermission()
                     PermissionsManager.shared.openScreenCaptureSettings()
@@ -85,25 +93,30 @@ public final class AppState: ObservableObject {
     }
     
     private func playCaptureSound() {
-        if AppPreferences.shared.playShutterSound {
-            SoundManager.shared.playShutter()
-        }
+        guard AppPreferences.shared.playSoundOnCapture else { return }
+        NSSound(named: "Grab")?.play()
     }
     
-    // MARK: - Screenshot Item Management
+    // MARK: - Stack Management
     
     public func addScreenshot(cgImage: CGImage, displayID: CGDirectDisplayID) {
-        let item = ScreenshotItem(cgImage: cgImage)
-        
-        // Setup Auto-save at 60s lifecycle expiration
-        item.onAutoSave = { [weak self] expiredItem in
-            self?.handleAutoSave(for: expiredItem)
+        let action = AppPreferences.shared.afterScreenshot
+        switch action {
+        case .copy:
+            ClipboardManager.shared.copyImageToClipboard(cgImage)
+            showToast("Copied to Clipboard")
+        case .save:
+            if DesktopSaver.shared.saveImageToDisk(cgImage) != nil {
+                let folderName = URL(fileURLWithPath: AppPreferences.shared.saveDirectoryPath).lastPathComponent
+                showToast("Saved to \(folderName)")
+            }
+        case .show:
+            let item = ScreenshotItem(cgImage: cgImage, displayID: displayID) { [weak self] expiredItem in
+                self?.handleAutoSave(for: expiredItem)
+            }
+            activeScreenshots.append(item)
+            showCornerPanel(for: displayID)
         }
-        
-        activeScreenshots.append(item)
-        item.startTimer()
-        
-        showCornerPanel(for: displayID)
     }
     
     public func toggleExpanded() {
@@ -112,7 +125,7 @@ public final class AppState: ObservableObject {
     }
     
     public func copyScreenshot(_ item: ScreenshotItem) {
-        _ = ClipboardManager.shared.copyImageToClipboard(item.cgImage)
+        ClipboardManager.shared.copyImageToClipboard(item.cgImage)
         showToast("Copied to Clipboard")
         deleteScreenshot(item)
     }
