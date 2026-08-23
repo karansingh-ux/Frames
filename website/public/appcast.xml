@@ -7,16 +7,16 @@
         <language>en</language>
         <item>
             <title>Frames 1.0.0</title>
-            <pubDate>Sun, 23 Aug 2026 02:22:10 +0530</pubDate>
+            <pubDate>Sun, 23 Aug 2026 14:27:34 +0530</pubDate>
             <sparkle:releaseNotesLink>https://framesapp.com/releases/1.0.0.html</sparkle:releaseNotesLink>
             <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
             <enclosure
                 url="https://framesapp.com/downloads/Frames.zip"
                 sparkle:version="1"
                 sparkle:shortVersionString="1.0.0"
-                length="2921715"
+                length="2921898"
                 type="application/octet-stream"
-                sparkle:edSignature="NHYXpwVbOvKuMjDDYIqtbhEuNrT3il7ekXTu/yUUrZxpEOx/ALzIa7rg+6WbVcy+4MLeie5g3aEXD93pMa14AQ==" />
+                sparkle:edSignature="xQ+pGD/JzHOSS2JUgQGiJ+AXcR6iEYghhSLnEFI91CoX5/s6Nqiv9fBbaoFy+t32Fr6upq2iRE5qegVc4lI1CA==" />
         </item>
     </channel>
 </rss>

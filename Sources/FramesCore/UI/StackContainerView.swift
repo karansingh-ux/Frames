@@ -50,6 +50,10 @@ public struct StackContainerView: View {
                 }
                 
                 // Unified Cards Layer
+                let totalCount = appState.activeScreenshots.count
+                let expandedHeight = CGFloat(totalCount) * 150.0 + CGFloat(max(0, totalCount - 1)) * 12.0
+                let collapsedHeight = 150.0 + CGFloat(max(0, totalCount - 1)) * 7.0
+                
                 ZStack(alignment: .bottomTrailing) {
                     ForEach(Array(appState.activeScreenshots.enumerated()), id: \.element.id) { index, item in
                         let offsetIndex = (appState.activeScreenshots.count - 1) - index
@@ -90,7 +94,8 @@ public struct StackContainerView: View {
                         }
                     }
                 }
-                .frame(width: 220, height: 150, alignment: .bottomTrailing)
+                .frame(width: 220, height: appState.isExpanded ? expandedHeight : collapsedHeight, alignment: .bottomTrailing)
+                .animation(stackSpringAnimation, value: appState.isExpanded)
             }
             
             // Toast Overlay (e.g. "Saved to Desktop")
